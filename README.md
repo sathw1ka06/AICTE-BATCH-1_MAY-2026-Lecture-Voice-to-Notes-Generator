@@ -1,4 +1,4 @@
-# EduScribe AI
+# Edu AI
 
 AI-powered lecture transcription and study material generator. Upload an audio file and get a full transcript, structured notes, flashcards, and a quiz — automatically.
 
