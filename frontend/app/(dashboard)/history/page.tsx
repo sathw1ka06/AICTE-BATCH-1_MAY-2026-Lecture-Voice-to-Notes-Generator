@@ -24,6 +24,16 @@ function formatDate(iso: string): string {
   });
 }
 
+function formatDuration(seconds: number | null): string {
+  if (!seconds) return "—";
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = Math.floor(seconds % 60);
+  if (h > 0) return `${h}h ${m}m`;
+  if (m > 0) return `${m}m ${s}s`;
+  return `${s}s`;
+}
+
 export default function HistoryPage() {
   const [lectures, setLectures] = useState<Lecture[]>([]);
   const [loading, setLoading] = useState(true);
@@ -89,20 +99,26 @@ export default function HistoryPage() {
                 <th className="text-left px-6 py-3.5 text-xs font-semibold text-[#013237]/50 uppercase tracking-wider">
                   Status
                 </th>
+                <th className="text-left px-6 py-3.5 text-xs font-semibold text-[#013237]/50 uppercase tracking-wider">
+                  Progress
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#EAF9E7]">
               {lectures.map((lecture) => (
                 <tr
                   key={lecture.id}
-                  className="hover:bg-[#EAF9E7]/60 transition-colors"
+                  className="hover:bg-[#EAF9E7]/60 transition-colors cursor-pointer"
+                  onClick={() =>
+                    (window.location.href = `/lecture/${lecture.id}`)
+                  }
                 >
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 bg-[#EAF9E7] rounded-lg flex items-center justify-center flex-shrink-0">
                         <FileAudio className="w-4 h-4 text-[#4CA771]" />
                       </div>
-                      <span className="text-sm font-medium text-[#013237]">
+                      <span className="text-sm font-medium text-[#013237] hover:text-[#4CA771] transition-colors">
                         {lecture.title}
                       </span>
                     </div>
@@ -114,7 +130,7 @@ export default function HistoryPage() {
                     {lecture.duration ? (
                       <span className="flex items-center gap-1.5">
                         <Clock className="w-3.5 h-3.5" />
-                        {lecture.duration}
+                        {formatDuration(lecture.duration)}
                       </span>
                     ) : (
                       <span className="text-[#013237]/30">—</span>
@@ -129,6 +145,19 @@ export default function HistoryPage() {
                     >
                       {lecture.status}
                     </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-2">
+                      <div className="w-20 h-1.5 bg-[#C0E6BA] rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-[#4CA771] rounded-full"
+                          style={{ width: `${lecture.progress ?? 0}%` }}
+                        />
+                      </div>
+                      <span className="text-xs text-[#013237]/40">
+                        {lecture.progress ?? 0}%
+                      </span>
+                    </div>
                   </td>
                 </tr>
               ))}
